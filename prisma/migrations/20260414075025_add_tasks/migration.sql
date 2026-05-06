@@ -1,0 +1,12 @@
+-- CreateTable
+CREATE TABLE "Task" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "dealId" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
+    "priority" TEXT NOT NULL DEFAULT 'MEDIUM',
+    "status" TEXT NOT NULL DEFAULT 'TODO',
+    "dueDate" DATETIME,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL,
+    CONSTRAINT "Task_dealId_fkey" FOREIGN KEY ("dealId") REFERENCES "Deal" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);

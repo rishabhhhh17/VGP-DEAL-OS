@@ -1,0 +1,154 @@
+// This is your Prisma schema file
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Deal {
+  id           String        @id @default(cuid())
+  companyName  String
+  stage        String        @default("SOURCING")
+  sector       String?
+  checkSize    String?
+  source       String?
+  thesis       String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  meetings          Meeting[]
+  interactions      Interaction[]
+  contacts          Contact[]
+  tasks             Task[]
+  documents         Document[]
+  screeningResults  ScreeningResult[]
+}
+
+model Interaction {
+  id                 String       @id @default(cuid())
+  dealId             String?
+  deal               Deal?        @relation(fields: [dealId], references: [id], onDelete: SetNull)
+  importBatchId      String?
+  importBatch        ImportBatch? @relation(fields: [importBatchId], references: [id], onDelete: SetNull)
+  date               DateTime
+  personName         String
+  companyName        String?
+  companyUrl         String?
+  context            String?
+  mandate            String?
+  interactionType    String?
+  origination        String?
+  referralTouchpoint String?
+  vgpPoc             String?
+  outcome            String?
+  takeaways                String?
+  nextSteps                String?
+  deadline                 DateTime?
+  complete                 Boolean?
+  linkToNotes              String?
+  contactEmail             String?
+  contactMobile            String?
+  mandateInvestmentPartner Boolean?
+  fathomNotes              String?
+  createdAt                DateTime     @default(now())
+  updatedAt                DateTime     @updatedAt
+}
+
+model ImportBatch {
+  id           String        @id @default(cuid())
+  filename     String
+  rowCount     Int
+  errorCount   Int           @default(0)
+  importedAt   DateTime      @default(now())
+  interactions Interaction[]
+}
+
+model Config {
+  id    String @id
+  value String
+}
+
+model Meeting {
+  id           String   @id @default(cuid())
+  dealId       String
+  deal         Deal     @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  title        String
+  date         DateTime
+  duration     Int?
+  transcript   String?
+  summary      String?
+  keyTakeaways String?
+  risks        String?
+  nextSteps    String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Contact {
+  id        String   @id @default(cuid())
+  dealId    String
+  deal      Deal     @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  name      String
+  role      String?
+  email     String?
+  linkedin  String?
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Task {
+  id        String    @id @default(cuid())
+  dealId    String
+  deal      Deal      @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  title     String
+  priority  String    @default("MEDIUM")
+  status    String    @default("TODO")
+  dueDate   DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Document {
+  id          String   @id @default(cuid())
+  dealId      String?
+  deal        Deal?    @relation(fields: [dealId], references: [id], onDelete: SetNull)
+  name        String
+  category    String   @default("MISC")
+  subcategory String?
+  size        Int
+  mimeType    String
+  filePath    String
+  createdAt   DateTime @default(now())
+}
+
+model ScreenerCriteria {
+  id               String   @id @default(cuid())
+  fundMandate      String?
+  sectorPrefs      String?
+  teamRequirements String?
+  tractionReqs     String?
+  marketSize       String?
+  dealStructure    String?
+  redFlags         String?
+  otherCriteria    String?
+  updatedAt        DateTime @updatedAt
+  createdAt        DateTime @default(now())
+}
+
+model ScreeningResult {
+  id            String   @id @default(cuid())
+  companyName   String
+  dealId        String?
+  deal          Deal?    @relation(fields: [dealId], references: [id], onDelete: SetNull)
+  sector        String?
+  stage         String?
+  context       String?
+  overallScore  Int
+  fitLevel      String
+  fullResult    String
+  createdAt     DateTime @default(now())
+}
