@@ -27,6 +27,7 @@ uploads/
 *.db-journal
 *.db-wal
 *.db-shm
+!prisma/seed.db
 
 # Prisma generated (can be regenerated)
 src/generated/
